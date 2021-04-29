@@ -106,9 +106,15 @@
                 </tbody>
             </table>
             <div class="ui vertical center aligned segment">
-                <div class="ui huge statistic">
+                <div class="ui small statistic">
                     <div class="label">Score</div>
                     <div id="scoreCont" class="value"></div>
+                </div>
+            </div>
+            <div class="ui vertical center aligned segment">
+                <div class="ui tiny statistic">
+                    <div class="label">Ranked</div>
+                    <div id="rank" class="value"></div>
                 </div>
             </div>
         </div>

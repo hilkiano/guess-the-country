@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Games;
 use App\Models\Country;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 use Log;
 
@@ -46,7 +47,15 @@ class GamesController extends Controller
 
         $game->save();
 
-        return response()->json(array('success' => true, 'last_insert_id' => $game->id), 200);
+        // get rank
+        $count = Games::count();
+
+        $q = DB::table('games')
+            ->select(DB::raw("FIND_IN_SET(score, (SELECT GROUP_CONCAT(score ORDER BY score DESC) FROM games)) AS rank"))
+            ->where('id', $game->id)
+            ->first();
+
+        return response()->json(array('success' => true, 'last_insert_id' => $game->id, 'rank' => $q->rank, 'players' => $count), 200);
     }
 
 }

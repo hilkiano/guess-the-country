@@ -44,6 +44,14 @@ $(function() {
         Scramble.BeginGame();
     });
 
+    $('#name').on('keyup', function(e) {
+        let code = e.key;
+        if (code === "Enter") e.preventDefault();
+        if (code === "Enter"){
+            $('#beginButton').trigger('click');
+        }
+    })
+
     $('#name').on('keypress', function() {
         $('#nameInput').removeClass("error");
     });
@@ -186,11 +194,19 @@ Scramble.SubmitAnswers = function(zero) {
         {
             correctAnswer++;
             score += 10;
-            rowResult += '<td><i class="green check icon"></i> '+ answered[i] +'</td>';
+            rowResult += '<td><i class="green check icon"></i> '+ answered[i] +' (+10 pts)</td>';
         }
         else
         {
-            rowResult += '<td><i class="red times icon"></i> '+ answered[i] +'</td>';
+            if (answered[i] != "")
+            {
+                score += 2;
+                rowResult += '<td><i class="red times icon"></i> '+ answered[i] +' (+2 pts)</td>';
+            }
+            else
+            {
+                rowResult += '<td><i class="red times icon"></i> '+ answered[i] +' (0 pt)</td>';
+            }
         }
         rowResult += '<td class="green">'+ Scramble.answer[i] +'</td>';
         $('#resultTable').append(rowResult);
@@ -225,8 +241,7 @@ Scramble.SubmitAnswers = function(zero) {
         message = 'You answered '+ correctAnswer +' from 10 questions correctly in '+ timeLeft +'.'; 
     }
     $('#message').html(message);
-    $('#scoreCont').html(score);
-    $('#scoreModal').modal('show');
+    $('#scoreCont').html(Scramble.NumberFormat(score));
 
     // prepare saving
     let ajaxData = {
@@ -237,7 +252,11 @@ Scramble.SubmitAnswers = function(zero) {
     }
 
     $.when(AjaxAddResults(ajaxData)).then(function(response) {
-        // code here
+        let rankHtml = '';
+        rankHtml = response.rank +' from '+ response.players +' players';
+        $('#rank').html(rankHtml);
+
+        $('#scoreModal').modal('show');
     });
 
     function AjaxAddResults (ajaxData)
@@ -251,6 +270,7 @@ Scramble.SubmitAnswers = function(zero) {
     }
 }
 
+// support function
 Scramble.Scrambling = function(word) {
     let a = word.split(""),
         n = a.length;
@@ -263,4 +283,10 @@ Scramble.Scrambling = function(word) {
         a[j] = tmp;
     }
     return a.join("");
+}
+
+Scramble.NumberFormat = function(n) {
+    let p = n.toString().split(".");
+    p[0] = p[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return p.join(".");
 }
