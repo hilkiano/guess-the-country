@@ -3,6 +3,7 @@
     <head>
         <link href="{{ asset('semantic.min.css') }}" rel="stylesheet">
         <link href="{{ asset('main.css') }}" rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scal=1.0">
         <title>Guess The Country</title>
         <script>
             const urlApi = {
